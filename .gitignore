@@ -1,0 +1,58 @@
+# ------------------------------------
+# 1. Configuración del Entorno Python
+# ------------------------------------
+# Entornos virtuales (venv, env, etc.)
+venv/
+env/
+*.pyc
+__pycache__/
+
+# Archivos de instalación y compilación
+*.egg-info/
+dist/
+build/
+
+
+# ------------------------------------
+# 2. Configuración de Django
+# ------------------------------------
+# Archivos de base de datos local (SQLite)
+# Es VITAL ignorar esto, ya que contiene todos los datos.
+*.sqlite3
+db.sqlite3
+
+# Archivos de configuración local o sensible
+# Ignorar el archivo de configuración principal de Django si contiene claves secretas (SECRET_KEY)
+# Si estás usando variables de entorno o un archivo de configuración separado para la clave,
+# asegúrate de que ese archivo también esté ignorado.
+# Generalmente, las configuraciones de hosting (AWS, Render, Railway, etc.) también van aquí.
+local_settings.py
+
+# Archivos estáticos o de medios generados en el servidor de desarrollo
+/static/
+/media/
+
+# ------------------------------------
+# 3. Archivos del Sistema Operativo
+# ------------------------------------
+# Ignorar archivos temporales o de metadatos comunes
+.DS_Store # macOS
+Thumbs.db # Windows
+*~
+.idea/ # Directorios de IDEs como PyCharm
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------
+# 4. Configuración de Frontend (React)
+# ------------------------------------
+# Ignorar el directorio de dependencias de Node.js
+/frontend/node_modules
+
+# Ignorar el resultado de la compilación de React
+/frontend/build
+
+# Ignorar archivos de entorno de React que contienen claves de API
+/frontend/.env.local
+/frontend/.env.development.local
+/frontend/.env.production.local
