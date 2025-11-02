@@ -1,6 +1,6 @@
 # MenteAbierta - Backend (API RESTful)
 
-Este repositorio contiene el código del Backend de MenteAbierta, una plataforma digital para la promoción del bienestar emocional.
+Este repositorio contiene el código del Backend de MenteAbierta, una plataforma digital para la promoción del bienestar emocional (o al menos esa es la idea).
 
 ## 🛠️ Tecnologías Principales
 
