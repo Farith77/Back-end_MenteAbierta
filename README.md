@@ -36,6 +36,7 @@ pip install -r requirements.txt
 
 ## Migra la base de datos
 python manage.py makemigrations
+
 python manage.py migrate
 
 ## Levanta el servidor
