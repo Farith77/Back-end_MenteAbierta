@@ -40,3 +40,14 @@ class DiarioEmocionalSerializer(serializers.ModelSerializer):
         model = DiarioEmocional
         fields = ('id', 'usuario', 'usuario_seudonimo', 'fecha_entrada', 'contenido', 'humor')
         read_only_fields = ('usuario', 'fecha_entrada') # El usuario se asigna automáticamente
+  
+  
+class UsuarioPerfilSerializer(serializers.ModelSerializer):
+    """
+    Serializador para mostrar datos de perfil (email y alias/seudónimo).
+    """
+    class Meta:
+        model = Usuario
+        # Solo expone los campos necesarios para el perfil
+        fields = ('id', 'email', 'seudonimo', 'is_active', 'date_joined')
+        read_only_fields = ('id', 'email', 'is_active', 'date_joined')

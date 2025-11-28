@@ -3,7 +3,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
     RegistroUsuarioView, 
     DiarioEmocionalListCreateView, 
-    DiarioEmocionalRetrieveUpdateDestroyView
+    DiarioEmocionalRetrieveUpdateDestroyView,
+    PerfilUsuarioView
 )
 
 urlpatterns = [
@@ -19,6 +20,9 @@ urlpatterns = [
     # 3. Refrescar Token (POST /api/v1/auth/refresh/)
     # Permite obtener un nuevo token de acceso cuando el actual caduca.
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
+    # --- ENDPOINTS DEL PERFIL ---
+    path('user/me/', PerfilUsuarioView.as_view(), name='user-me'),
 
     # --- ENDPOINTS DEL DIARIO EMOCIONAL (RF3) ---
     

@@ -1,12 +1,12 @@
 from django.shortcuts import render
-
+from rest_framework import generics, permissions
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import DiarioEmocional
 from .serializers import UsuarioRegistroSerializer, DiarioEmocionalSerializer
-
+from .serializers import UsuarioRegistroSerializer, DiarioEmocionalSerializer, UsuarioPerfilSerializer # Importa el nuevo serializador
 
 # --- 1. VISTAS DE AUTENTICACIÓN (RF1, RF2) ---
 
@@ -70,3 +70,16 @@ class DiarioEmocionalRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPI
     # o borrar sus propias entradas.
     def get_queryset(self):
         return DiarioEmocional.objects.filter(usuario=self.request.user)
+        
+        
+class PerfilUsuarioView(generics.RetrieveAPIView):
+    """
+    Endpoint: GET /api/v1/perfil/me/
+    Devuelve los datos del usuario autenticado.
+    """
+    serializer_class = UsuarioPerfilSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # Devuelve el objeto Usuario asociado a la solicitud (gracias al token)
+        return self.request.user

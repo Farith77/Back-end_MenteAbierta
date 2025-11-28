@@ -41,9 +41,12 @@ INSTALLED_APPS = [
     # --- Terceros (Django REST Framework y JWT) ---
     'rest_framework',
     'rest_framework_simplejwt', # Necesario para la autenticación JWT
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', # Nueva línea (Debe ir primero)
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -126,3 +129,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'api.Usuario'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    # Añade cualquier otra URL de desarrollo que use tu equipo
+]
+
+# Opcional: Para permitir credenciales (cookies, tokens) a través de CORS
+CORS_ALLOW_CREDENTIALS = True
