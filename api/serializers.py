@@ -1,5 +1,11 @@
 from rest_framework import serializers
 from .models import Usuario, DiarioEmocional
+from .models import Cuestionario, Pregunta, RespuestaUsuario
+from .models import RegistroEmocion
+from .models import Ejercicio, EjercicioCompletado
+from .models import Publicacion, Comentario
+from .models import Articulo
+from .models import Tip
 
 # --- SERIALIZADOR PARA REGISTRO Y LOGIN (Usuario) ---
 class UsuarioRegistroSerializer(serializers.ModelSerializer):
@@ -51,3 +57,106 @@ class UsuarioPerfilSerializer(serializers.ModelSerializer):
         # Solo expone los campos necesarios para el perfil
         fields = ('id', 'email', 'seudonimo', 'is_active', 'date_joined')
         read_only_fields = ('id', 'email', 'is_active', 'date_joined')
+      
+      
+class PreguntaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pregunta
+        fields = ['id', 'texto', 'orden']
+
+class CuestionarioDetailSerializer(serializers.ModelSerializer):
+    """Muestra el cuestionario con sus preguntas anidadas"""
+    preguntas = PreguntaSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Cuestionario
+        fields = ['id', 'nombre', 'descripcion', 'preguntas']
+
+class RespuestaUsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RespuestaUsuario
+        fields = ['id', 'pregunta', 'valor_respuesta', 'fecha_respuesta']
+        read_only_fields = ['usuario', 'fecha_respuesta']
+
+    def create(self, validated_data):
+        # Asigna el usuario autenticado automáticamente
+        validated_data['usuario'] = self.context['request'].user
+        return super().create(validated_data)
+        
+        
+class RegistroEmocionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistroEmocion
+        fields = ['id', 'emocion', 'fecha_registro', 'nota']
+        read_only_fields = ['id', 'fecha_registro'] # El usuario no decide la fecha, es automática
+
+    def create(self, validated_data):
+        # Asigna el usuario autenticado automáticamente al guardar
+        validated_data['usuario'] = self.context['request'].user
+        return super().create(validated_data)
+        
+class EjercicioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ejercicio
+        fields = ['id', 'titulo', 'descripcion', 'categoria', 'icono', 'duracion', 'instrucciones', 'media_url']
+
+class EjercicioCompletadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EjercicioCompletado
+        fields = ['id', 'ejercicio', 'fecha_completado']
+        read_only_fields = ['fecha_completado']
+        
+        
+class ComentarioSerializer(serializers.ModelSerializer):
+    autor_seudonimo = serializers.CharField(source='usuario.seudonimo', read_only=True)
+    
+    class Meta:
+        model = Comentario
+        fields = ['id', 'autor_seudonimo', 'contenido', 'fecha_creacion']
+        read_only_fields = ['fecha_creacion']
+
+class PublicacionSerializer(serializers.ModelSerializer):
+    autor_seudonimo = serializers.CharField(source='usuario.seudonimo', read_only=True)
+    num_likes = serializers.SerializerMethodField()
+    num_comentarios = serializers.SerializerMethodField()
+    ya_di_like = serializers.SerializerMethodField() # Para saber si pintar el corazón de color
+
+    class Meta:
+        model = Publicacion
+        fields = [
+            'id', 'autor_seudonimo', 'titulo', 'contenido', 
+            'categoria', 'fecha_creacion', 
+            'num_likes', 'num_comentarios', 'ya_di_like'
+        ]
+        read_only_fields = ['fecha_creacion']
+
+    def get_num_likes(self, obj):
+        return obj.total_likes()
+
+    def get_num_comentarios(self, obj):
+        return obj.total_comentarios()
+
+    def get_ya_di_like(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.likes.filter(id=request.user.id).exists()
+        return False
+
+    def create(self, validated_data):
+        validated_data['usuario'] = self.context['request'].user
+        return super().create(validated_data)
+        
+        
+class ArticuloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Articulo
+        fields = [
+            'id', 'titulo', 'resumen', 'contenido', 
+            'categoria', 'imagen_url', 'tiempo_lectura', 'fecha_publicacion'
+        ]
+        
+        
+class TipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tip
+        fields = ['id', 'titulo', 'contenido', 'categoria']
