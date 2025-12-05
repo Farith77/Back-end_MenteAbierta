@@ -81,8 +81,12 @@ WSGI_APPLICATION = 'menteabierta.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bd_mente_abierta',      # Debe coincidir con POSTGRES_DB del docker-compose
+        'USER': 'usuario_admin',      # Debe coincidir con POSTGRES_USER
+        'PASSWORD': 'mi_clave_secreta', # Debe coincidir con POSTGRES_PASSWORD
+        'HOST': 'localhost',          # 'localhost' porque corremos Django en nuestra PC, no en Docker
+        'PORT': '5430',
     }
 }
 

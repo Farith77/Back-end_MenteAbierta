@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 import uuid
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # --- GESTOR DE USUARIOS ---
 class UsuarioManager(BaseUserManager):
@@ -102,9 +103,8 @@ class RespuestaUsuario(models.Model):
 # --- MÓDULO 3: REGISTRO DE EMOCIONES ---
 class RegistroEmocion(models.Model):
     """
-    Registra el estado emocional del usuario basado en categorías predefinidas.
+    Registra el estado emocional del usuario, incluyendo intensidad y notas.
     """
-    # Opciones exactas basadas en tu diseño UI
     OPCIONES_EMOCION = [
         ('FELIZ', 'Feliz'),
         ('TRANQUILO', 'Tranquilo'),
@@ -116,12 +116,18 @@ class RegistroEmocion(models.Model):
 
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='registros_emocionales')
     emocion = models.CharField(max_length=20, choices=OPCIONES_EMOCION)
-    fecha_registro = models.DateTimeField(auto_now_add=True)
     
-    # El documento menciona intensidad y nota opcional[cite: 243, 256].
-    # Agregamos 'nota' por si en el futuro el diseño lo incluye, 
-    # aunque en la imagen actual no se ve input de texto.
-    nota = models.TextField(blank=True, null=True)
+    # NUEVO: Campo para el slider de intensidad.
+    intensidad = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        default=5, # Un valor medio por defecto
+        help_text="Nivel de intensidad de la emoción (escala numérica)"
+    )
+
+    # CONFIRMADO: Nota privada (Opcional según la UI)
+    nota = models.TextField(blank=True, null=True, help_text="Nota privada opcional sobre la emoción")
+
+    fecha_registro = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-fecha_registro']
@@ -129,7 +135,7 @@ class RegistroEmocion(models.Model):
         verbose_name_plural = "Registros de Emociones"
 
     def __str__(self):
-        return f"{self.usuario.email} - {self.emocion} ({self.fecha_registro.strftime('%Y-%m-%d')})"
+        return f"{self.usuario.email} - {self.emocion} (Nivel: {self.intensidad})"
         
         
 # --- MÓDULO 7: EJERCICIOS DE AUTOCUIDADO ---

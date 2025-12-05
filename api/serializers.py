@@ -87,8 +87,9 @@ class RespuestaUsuarioSerializer(serializers.ModelSerializer):
 class RegistroEmocionSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegistroEmocion
-        fields = ['id', 'emocion', 'fecha_registro', 'nota']
-        read_only_fields = ['id', 'fecha_registro'] # El usuario no decide la fecha, es automática
+        # ACTUALIZADO: Agregamos 'intensidad' y 'nota'
+        fields = ['id', 'usuario', 'emocion', 'intensidad', 'nota', 'fecha_registro'] 
+        read_only_fields = ['id', 'usuario', 'fecha_registro'] 
 
     def create(self, validated_data):
         # Asigna el usuario autenticado automáticamente al guardar
