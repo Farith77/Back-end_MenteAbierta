@@ -44,7 +44,7 @@ class DiarioEmocionalSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = DiarioEmocional
-        fields = ('id', 'usuario', 'usuario_seudonimo', 'fecha_entrada', 'contenido', 'humor')
+        fields = ('id', 'usuario', 'usuario_seudonimo', 'fecha_entrada', 'titulo', 'contenido', 'humor')
         read_only_fields = ('usuario', 'fecha_entrada') # El usuario se asigna automáticamente
   
   
